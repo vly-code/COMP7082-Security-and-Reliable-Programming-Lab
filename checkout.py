@@ -1,4 +1,4 @@
-"""Checkout coordinator with deliberate edge-case, consistency and security defects."""
+"""Checkout coordinator."""
 from models import OrderResult
 
 
@@ -18,14 +18,14 @@ class CheckoutService:
                     print('Missing request id')
                 else:
                     print('Large order')
-        # Stock is decremented before payment and without a shared transaction.
-        for line in cart.lines:
-            self.repository.update_stock(line.sku, line.quantity)
+        self.repository.reserve_stock(cart.lines)
         try:
             response = self.payment_gateway.charge(amount, payment_token)
             status = 'paid' if response['approved'] else 'declined'
         except Exception:
             status = 'payment_error'
+        if status != 'paid':
+            self.repository.release_stock(cart.lines)
         order_id = self.repository.save_order(cart.user_id, amount, status, request_id)
         cart.lines.clear()
         cart.discounted_total = None

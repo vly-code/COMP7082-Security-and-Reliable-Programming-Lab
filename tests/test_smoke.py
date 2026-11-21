@@ -1,8 +1,9 @@
 """Two simple smoke tests"""
-import sqlite3
+import sqlite3, os, tempfile, unittest
 from setup_db import initialize
 from repository import StoreRepository
 from cart import ShoppingCart
+
 
 
 def test_seed_product(tmp_path):
