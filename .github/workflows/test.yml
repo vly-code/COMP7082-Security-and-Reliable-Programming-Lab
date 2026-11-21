@@ -22,7 +22,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # No dependencies to install: the project only uses the standard library.
+      - name: Install pytest
+        run: python -m pip install pytest
+            
       - name: Run tests
         run: python -m pytest -q
 
