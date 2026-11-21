@@ -1,0 +1,12 @@
+Task 1 - Find and Correct Defects
+
+|Defect  |Reason   |Fix   |
+|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+|In models, Product.price, CartLine.unit_price, and OrderResult.total are floats   |When performing multiple arithmetic operations, it can result in rounding errors over multiple   |Store as a Decimal class which uses int stored in cents, ie 10.50 will be stored as 1050   |
+|For Cart.add_Item and Cart.remove_item, quantity is not validated   |Negative, Zero, Floats and True can be used which can end up doing unintended operations   |Quantity must be a positive integer, otherwise CartError should be raied   |
+|Cart.add_item doesn't check what is already in the cart   |Items already in the cart are ignored, so if you call add_item twice with a requested quantity of 6, but with only 10 items in stock, it will still pass   |Check uses existing + requested quantity   |
+|Cart.apply_discount doesn't check if its already discounted   |You can apply the same discount multiple times   |Coupons should only be allowed to be used once, new codes replaces the old one|
+|Cart.apply_discount, SAVE15 on a small cart can give a negative total  |You can have a negative value when discounting a cart with less than $15   |If the total price is less than 0 when discounted, it should have a floor of 0   |
+|Checkout.checkout stock is decremented before payment or declined or error   |Inventory is inconsistent when checking out items when they are declined, returned, or erred   |Stock should be reserved first, charged then finalized. Any outcome other than paid restores stock|
+|Repository.list_orders returns everyone's order   |It should not be returning everone's orders   |It should filter by user|
+|Repository.get_product, Repository.get_saved_cart build SQL with f-strings    |python evaluates f-strings immediately into raw text without escaping special characters leading to SQL injections  |SQL query should be parameterised and not use f-strings   |
